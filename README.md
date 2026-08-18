@@ -1,569 +1,261 @@
-# 🚖 Uber Real-Time Streaming Data Platform
+# Real-Time Mobility Streaming Data Platform
 
-<p align="center">
-  <img src="https://img.shields.io/badge/PySpark-Streaming-orange?style=for-the-badge&logo=apachespark" />
-  <img src="https://img.shields.io/badge/Kafka-Event%20Streaming-black?style=for-the-badge&logo=apachekafka" />
-  <img src="https://img.shields.io/badge/Airflow-Orchestration-blue?style=for-the-badge&logo=apacheairflow" />
-  <img src="https://img.shields.io/badge/PostgreSQL-Warehouse-blue?style=for-the-badge&logo=postgresql" />
-  <img src="https://img.shields.io/badge/Docker-Containerized-blue?style=for-the-badge&logo=docker" />
-  <img src="https://img.shields.io/badge/AWS-Cloud%20Ready-orange?style=for-the-badge&logo=amazonaws" />
-</p>
+> Production-oriented Data Engineering portfolio project demonstrating event streaming, distributed processing, validation, orchestration, analytical storage, and real-time mobility analytics using Kafka and PySpark.
 
----
+## Overview
 
-# 📌 Overview
+This project models a ride-hailing data platform using publicly available **NYC TLC trip data** as the source. Batch trip records are transformed into streaming-style events, ingested through Kafka, processed with PySpark Structured Streaming, and prepared for analytical workloads.
 
-This project is a production-style real-time streaming data engineering platform inspired by large-scale ride-sharing systems such as Uber. The platform processes transportation events using Kafka, PySpark Structured Streaming, Airflow, PostgreSQL, and Docker to simulate scalable distributed data engineering workflows.
+The architecture is designed around the responsibilities of a modern Data Engineer:
 
-The system demonstrates:
+**Source data → Event ingestion → Validation & enrichment → Distributed processing → Storage → Analytics → Orchestration**
 
-- Event-driven architecture
-- Real-time ETL processing
-- Distributed Spark optimization
-- Scalable pipeline orchestration
-- Analytics-ready data modeling
-- Production-style streaming systems
-
----
-
-# 🏗️ System Architecture
+## Architecture
 
 ```text
-NYC TLC Datasets
-        ↓
-Kafka Producer
-        ↓
-Kafka Topics
-        ↓
-Spark Structured Streaming
-        ↓
-Validation & Enrichment Layer
-        ↓
-Real-Time Processing Layer
-        ↓
-Operational Data Store
-        ↓
-Analytics & Aggregation Layer
-        ↓
-Dashboard / Reporting
+NYC TLC Trip Data
+        │
+        ▼
+  Kafka Producer
+        │
+        ▼
+  Kafka Topic(s)
+        │
+        ▼
+PySpark Structured Streaming
+        │
+        ├── Schema parsing
+        ├── Validation
+        ├── Deduplication
+        ├── Enrichment
+        └── Windowed aggregations
+        │
+        ▼
+Analytics / Operational Storage
+        │
+        ├── PostgreSQL
+        └── Parquet
+        │
+        ▼
+Spark SQL / Reporting
+
+Apache Airflow orchestrates batch and supporting workflows.
 ```
 
----
+## Technology Stack
 
-# ⚙️ Tech Stack
-
-| Category | Technologies |
+| Layer | Technologies |
 |---|---|
-| Streaming | Apache Kafka |
-| Distributed Processing | PySpark Structured Streaming |
-| Workflow Orchestration | Apache Airflow |
-| Storage | PostgreSQL |
-| Containerization | Docker |
 | Programming | Python |
-| Data Format | Parquet |
-| Analytics | Spark SQL |
-| Cloud Ready | AWS S3 / EMR Compatible |
+| Event Streaming | Apache Kafka |
+| Distributed Processing | PySpark Structured Streaming |
+| Analytical Processing | Spark SQL |
+| Storage | PostgreSQL, Parquet |
+| Orchestration | Apache Airflow |
+| Infrastructure | Docker / Docker Compose |
+| Cloud Path | AWS S3 / EMR compatible |
 
----
+## Data Source
 
-# 🚀 Key Features
+The project uses NYC Taxi & Limousine Commission trip-record data.
 
-✅ Real-time ride event streaming  
-✅ Distributed Spark-based ETL pipelines  
-✅ Kafka event-driven architecture  
-✅ Incremental processing workflows  
-✅ Validation and enrichment pipelines  
-✅ Streaming aggregations and analytics  
-✅ Workflow orchestration with Airflow  
-✅ Scalable distributed systems optimization  
-✅ Analytics-ready warehouse modeling  
-✅ Cloud-ready deployment architecture  
-
----
-
-# 📂 Datasets
-
-This project uses large-scale NYC TLC transportation datasets.
-
-## Included Datasets
-
-### 🚕 Yellow Taxi Trip Dataset
-
-Download URL:
+Example public Parquet sources:
 
 ```text
 https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet
-```
-
-### 🚖 FHV (For-Hire Vehicle) Dataset
-
-Download URL:
-
-```text
 https://d37ci6vzurychx.cloudfront.net/trip-data/fhv_tripdata_2024-01.parquet
 ```
 
-### 🌐 Official NYC TLC Dataset Portal
+Official dataset portal:
 
 ```text
 https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
 ```
 
----
+## Pipeline Responsibilities
 
-# 📊 Dataset Characteristics
+### 1. Ingestion
 
-- Millions of transportation records
-- Large-scale distributed processing
-- Real-world transportation analytics
-- Columnar parquet storage format
-- Streaming-compatible event simulation
+- Reads source trip records.
+- Converts batch records into Kafka events to simulate continuous arrival.
+- Publishes events to partitioned Kafka topics.
+- Preserves event timestamps for downstream processing.
 
----
+### 2. Validation & Enrichment
 
-# 🧾 Example Dataset Schema
-
-| Column | Description |
-|---|---|
-| pickup_datetime | Ride pickup timestamp |
-| dropoff_datetime | Ride dropoff timestamp |
-| trip_distance | Distance traveled |
-| fare_amount | Fare charged |
-| passenger_count | Number of passengers |
-| payment_type | Payment method |
-| pickup_location | Pickup zone |
-| dropoff_location | Dropoff zone |
-
----
-
-# 🧠 Event-Driven Pipeline Layers
-
-## 1️⃣ Ingestion Layer
-
-Responsible for:
-
-- Kafka event ingestion
-- Schema parsing
-- Raw event processing
-- Timestamp management
-
-### Technologies Used
-
-- Kafka
-- PySpark Structured Streaming
-
----
-
-## 2️⃣ Validation & Enrichment Layer
-
-Responsible for:
+The processing layer is responsible for:
 
 - Schema validation
-- Deduplication
 - Null handling
-- Data enrichment
-- Data quality checks
-
-### Features
-
-- Incremental processing
-- Event validation
-- Error handling
+- Duplicate detection
+- Invalid-value filtering
+- Timestamp normalization
+- Derived trip metrics
 - Metadata enrichment
 
----
+### 3. Distributed Processing
 
-## 3️⃣ Real-Time Processing Layer
+PySpark Structured Streaming provides scalable transformations and analytical aggregation.
 
-Responsible for:
+Typical workloads include:
 
-- Streaming aggregations
-- Ride metrics
-- Distributed transformations
-- Window-based analytics
-- Performance optimization
+- Trips per time window
+- Revenue/fare aggregation
+- Average trip distance
+- Trip duration
+- Pickup/drop-off demand
+- Peak-hour analysis
 
-### Spark Optimization Techniques
+### 4. Storage
 
-- Partitioning strategies
-- Reduced data shuffling
-- Incremental transformations
-- Efficient aggregations
+Processed data is designed for both operational and analytical consumption:
 
----
+- **Parquet** for efficient columnar storage and data-lake workloads
+- **PostgreSQL** for structured query and serving workloads
 
-## 4️⃣ Operational Data Store
+### 5. Orchestration
 
-Responsible for:
+Airflow provides workflow scheduling and dependency management for supporting batch operations such as ingestion preparation, validation, aggregation, and warehouse refreshes.
 
-- Structured analytics storage
-- Query-ready datasets
-- Operational reporting
-- Serving processed data
-
-### Technologies Used
-
-- PostgreSQL
-- Spark SQL
-
----
-
-## 5️⃣ Analytics Layer
-
-Responsible for:
-
-- KPI generation
-- Revenue analytics
-- Ride trend analysis
-- Peak-hour insights
-- Business reporting
-
----
-
-# 📁 Project Structure
+## Project Structure
 
 ```text
-uber-data-platform/
-│
+Uber-Real-Time-Streaming-Data-Platform-using-Kafka-PySpark/
 ├── data/
-│   ├── yellow_tripdata_2024-01.parquet
-│   └── fhv_tripdata_2024-01.parquet
-│
+│   └── *.parquet                 # Local source data; do not commit large files
 ├── producer/
-│   └── kafka_producer.py
-│
+│   └── kafka_producer.py         # Publishes trip events to Kafka
 ├── spark/
-│   ├── ingestion_layer.py
-│   ├── validation_enrichment.py
-│   ├── realtime_processing.py
-│   └── analytics_aggregation.py
-│
+│   ├── ingestion_layer.py        # Structured Streaming ingestion
+│   ├── validation_enrichment.py  # Data quality + enrichment
+│   ├── realtime_processing.py    # Streaming transformations
+│   └── analytics_aggregation.py  # Analytical aggregations
 ├── airflow/
-│   └── dags/
-│
-├── warehouse/
-│
-├── dashboards/
-│
-├── docker/
-│
-├── requirements.txt
-│
+│   └── dags/                     # Orchestration workflows
+├── warehouse/                    # PostgreSQL/warehouse assets
+├── dashboards/                   # Reporting assets
 ├── docker-compose.yml
-│
+├── requirements.txt
 └── README.md
 ```
 
----
+## Local Environment
 
-# 🔧 Local Setup
-
-## Prerequisites
-
-Install the following:
+### Prerequisites
 
 - Docker Desktop
 - Python 3.11+
 - Java 11+
-- Apache Spark
-- VS Code
+- Apache Spark / `spark-submit`
 
----
-
-# 📦 Install Dependencies
+### Install Python dependencies
 
 ```bash
-pip install pandas pyarrow kafka-python pyspark sqlalchemy psycopg2-binary
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
----
-
-# 🐳 Docker Compose Setup
-
-Create:
-
-```yaml
-version: '3'
-
-services:
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-
-  kafka:
-    image: confluentinc/cp-kafka:latest
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-    depends_on:
-      - zookeeper
-
-  postgres:
-    image: postgres:15
-    environment:
-      POSTGRES_USER: uber
-      POSTGRES_PASSWORD: uber
-      POSTGRES_DB: uberdb
-    ports:
-      - "5432:5432"
-```
-
----
-
-# ▶️ Start Infrastructure
+### Start infrastructure
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
-Verify running containers:
+Verify containers:
 
 ```bash
 docker ps
 ```
 
----
+## Kafka Workflow
 
-# 📨 Create Kafka Topic
+Create the event topic using the Kafka CLI available in the Kafka container or local installation:
 
 ```bash
 kafka-topics --create \
---topic uber_rides \
---bootstrap-server localhost:9092 \
---partitions 3 \
---replication-factor 1
+  --topic uber_rides \
+  --bootstrap-server localhost:9092 \
+  --partitions 3 \
+  --replication-factor 1
 ```
 
----
-
-# 🚀 Kafka Producer
-
-## producer/kafka_producer.py
-
-```python
-from kafka import KafkaProducer
-import pandas as pd
-import json
-import time
-
-producer = KafkaProducer(
-    bootstrap_servers='localhost:9092',
-    value_serializer=lambda v: json.dumps(v).encode('utf-8')
-)
-
-df = pd.read_parquet('data/yellow_tripdata_2024-01.parquet')
-
-for _, row in df.iterrows():
-    producer.send('uber_rides', row.to_dict())
-    time.sleep(0.1)
-```
-
-Run producer:
+Run the producer:
 
 ```bash
 python producer/kafka_producer.py
 ```
 
----
+## PySpark Streaming
 
-# ⚡ Spark Structured Streaming Consumer
-
-## spark/ingestion_layer.py
-
-```python
-from pyspark.sql import SparkSession
-
-spark = SparkSession.builder \
-    .appName("UberStreamingPlatform") \
-    .getOrCreate()
-
-kafka_df = spark.readStream \
-    .format("kafka") \
-    .option("kafka.bootstrap.servers", "localhost:9092") \
-    .option("subscribe", "uber_rides") \
-    .load()
-
-query = kafka_df.writeStream \
-    .format("console") \
-    .outputMode("append") \
-    .start()
-
-query.awaitTermination()
-```
-
-Run consumer:
+Submit the streaming application:
 
 ```bash
 spark-submit spark/ingestion_layer.py
 ```
 
----
+The streaming layer can then be extended with the validation, enrichment, and aggregation stages under `spark/`.
 
-# 📈 Example Analytics
+## Example Analytics
 
-The platform can generate real-time analytics such as:
+The platform supports analytical questions such as:
 
-- 🚕 Rides per hour
-- 📍 Top pickup/dropoff zones
-- 💰 Revenue trends
-- ⏱️ Trip duration analysis
-- 📈 Peak traffic windows
-- 🔥 Ride surge patterns
-- 🚦 Active trip monitoring
+- How many rides arrive in each five-minute window?
+- Which pickup zones have the highest demand?
+- What are the busiest hours of the day?
+- How does average fare vary by trip distance?
+- What is the average trip duration by location?
+- Which periods show unusual demand patterns?
 
----
+## Distributed Systems Considerations
 
-# 🔄 Workflow Orchestration
+The design highlights several concepts relevant to large-scale Data Engineering:
 
-Apache Airflow is used for:
-
-- DAG scheduling
-- Pipeline orchestration
-- Retry handling
-- Monitoring workflows
-- Dependency management
-- Batch aggregation workflows
-
-### Example DAGs
-
-- ingestion pipeline
-- validation workflow
-- aggregation pipeline
-- warehouse refresh jobs
-
----
-
-# 📈 Scalability & Optimization
-
-This project focuses heavily on distributed systems optimization techniques commonly used in enterprise data engineering environments.
-
-## Optimization Techniques Used
-
-- Spark partitioning strategies
+- Kafka topic partitioning
+- Consumer parallelism
+- Structured Streaming checkpoints
+- Stateful/windowed aggregations
 - Incremental processing
-- Streaming aggregations
-- Distributed transformations
-- Reduced data shuffling
-- Checkpointing
 - Fault tolerance
-- Scalable ETL design
-- Efficient Spark SQL operations
+- Partition-aware Spark transformations
+- Minimizing unnecessary shuffles
+- Columnar Parquet storage
+- Separation of ingestion and analytics workloads
 
----
+## Production Evolution
 
-# ☁️ Cloud-Ready Design
+A production implementation could add:
 
-The platform is designed to be compatible with:
-
-- AWS S3
-- EMR
-- Databricks
-- Delta Lake
-- Kubernetes
-- Dockerized Spark clusters
-
----
-
-# 🔮 Future Improvements
-
-Planned enhancements include:
-
-- Delta Lake integration
-- dbt transformations
-- Great Expectations validation
-- Streamlit dashboards
-- Grafana monitoring
+- Schema Registry with Avro or Protobuf
+- Kafka consumer groups and durable offsets
+- Dead-letter topics for invalid events
+- Delta Lake / Apache Iceberg tables
+- S3-based medallion data lake
+- dbt-based warehouse transformations
+- Great Expectations or equivalent data-quality testing
+- Prometheus/Grafana observability
 - Kubernetes deployment
-- CI/CD pipelines
-- AWS S3 integration
-- EMR deployment
-- Real-time anomaly detection
-- Iceberg support
-- Data observability
+- CI/CD automation
+- Secrets management
+- Data lineage and cataloging
 
----
+## Resume-Ready Summary
 
-# 💼 Resume Highlights
+**Designed an event-driven mobility data platform using Apache Kafka and PySpark Structured Streaming to ingest, validate, enrich, and aggregate NYC transportation events, with Parquet/PostgreSQL storage and Airflow-oriented orchestration for scalable analytical workloads.**
 
-### Example 1
-
-Built a production-style Uber-inspired real-time streaming data platform using Kafka, PySpark Structured Streaming, Airflow, and PostgreSQL to process transportation events at scale.
-
-### Example 2
-
-Designed an event-driven distributed architecture with ingestion, validation, enrichment, operational, and analytics layers optimized for scalable ETL workflows.
-
-### Example 3
-
-Implemented distributed Spark optimization techniques including partitioning, incremental processing, and streaming aggregations for high-performance data processing systems.
-
----
-
-# 🎯 Skills Demonstrated
-
+## Skills Demonstrated
 
 | Area | Skills |
 |---|---|
 | Streaming | Kafka, Structured Streaming |
-| Big Data | Spark, Distributed Systems |
-| ETL | Data Pipelines, Transformations |
+| Big Data | PySpark, Spark SQL |
+| ETL | Validation, enrichment, aggregation |
 | Orchestration | Airflow |
-| Warehousing | PostgreSQL |
-| Optimization | Spark Tuning, Partitioning |
-| Architecture | Event-Driven Design |
-| Engineering | Scalable Data Processing |
+| Storage | Parquet, PostgreSQL |
+| Architecture | Event-driven, distributed processing |
+| Performance | Partitioning, shuffle reduction, incremental processing |
+| Deployment | Docker, cloud-ready architecture |
 
+## Data Engineering Portfolio Note
 
----
-
-# 🧪 Sample Use Cases
-
-- Real-time ride analytics
-- Transportation trend analysis
-- Peak traffic monitoring
-- Revenue forecasting
-- Driver activity insights
-- Distributed ETL optimization
-- Streaming event processing
-- Large-scale operational analytics
-
----
-
-# 📚 Learning Outcomes
-
-This project demonstrates hands-on experience with:
-
-- Real-time streaming systems
-- Distributed data engineering
-- Event-driven architecture
-- Spark optimization
-- Workflow orchestration
-- Cloud-oriented pipeline design
-- Production-scale ETL systems
-- Analytics engineering
-
----
-
-# 👨‍💻 Author
-
-## Manish Reddy Kallu
-
-📧 manishkallu01@gmail.com
-
-🔗 LinkedIn: https://www.linkedin.com/in/manish-reddy-kallu-8a7587254/
-
-💻 GitHub: https://github.com/manishkallu01-wq
-
----
-
-# ⭐ Acknowledgements
-
-- NYC TLC Open Data
-- Apache Spark Community
-- Apache Kafka
-- Apache Airflow
-- Open-source Data Engineering Community
+This repository is intended to demonstrate architecture and engineering patterns rather than claim production ownership of Uber's systems. The source data is public NYC TLC data and the ride-hailing use case is an independent implementation.
