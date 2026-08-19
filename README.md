@@ -286,3 +286,38 @@ A larger deployment could add:
 ## Data Engineering Portfolio Note
 
 This repository demonstrates architecture and engineering patterns rather than claiming production ownership of Uber's systems. The data source is public NYC TLC trip data and the ride-hailing platform is an independent portfolio implementation.
+
+## Repository implementation status
+
+This repository now includes a runnable reference skeleton rather than documentation alone:
+
+- `docker-compose.yml` provisions Kafka and a Spark runtime.
+- `src/producer.py` emits deterministic, schema-versioned trip events.
+- `spark/streaming_job.py` validates, deduplicates, windows, and aggregates the stream.
+- `tests/test_event_contract.py` tests the event contract without external services.
+- `scripts/validate_project.py` provides a dependency-free structural and syntax gate.
+- `.github/workflows/ci.yml` runs the validation and unit tests.
+
+## Reproducibility contract
+
+```bash
+python scripts/validate_project.py
+python -m unittest discover -s tests -v
+docker compose up --build
+```
+
+The project is complete when valid trip events enter Kafka, malformed records are rejected, duplicate `event_id` values are removed within the watermark, and windowed city metrics are written to the console sink. Kafka/Spark must be available for the integration run; unit tests intentionally run without them.
+
+## Data-engineering methodology
+
+1. Model the trip as a versioned event with an immutable ID and event time.
+2. Partition Kafka records by `trip_id` for stable routing.
+3. Parse against an explicit Spark schema; do not infer production schemas.
+4. Quarantine invalid records rather than silently coercing them.
+5. Apply event-time watermarks and deduplication for late/replayed events.
+6. Aggregate in bounded windows and checkpoint state for recovery.
+7. Expose lag, invalid-event rate, throughput, and end-to-end latency in production.
+
+## Business value
+
+The reference pipeline converts high-volume trip activity into timely city-level demand and revenue signals. Those outputs support marketplace balancing, operations monitoring, incentive planning, and anomaly detection while preserving a clear path from raw event to metric.
