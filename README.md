@@ -321,3 +321,15 @@ The project is complete when valid trip events enter Kafka, malformed records ar
 ## Business value
 
 The reference pipeline converts high-volume trip activity into timely city-level demand and revenue signals. Those outputs support marketplace balancing, operations monitoring, incentive planning, and anomaly detection while preserving a clear path from raw event to metric.
+
+## Results and interpretation
+
+A successful reference run prints one row per five-minute window and city with:
+
+| Metric | Interpretation |
+|---|---|
+| `trip_count` | Valid, deduplicated trip events observed in the window |
+| `gross_booking_value_usd` | Sum of event fares; a pipeline demonstration metric, not audited revenue |
+| `avg_distance_km` | Mean trip distance for the window |
+
+Results must be interpreted with the generated-data boundary in mind: the producer creates deterministic synthetic values, so output proves pipeline behavior, state handling, and metric logic—not real marketplace performance. Production conclusions require governed source data, completeness reconciliation, late-data reporting, and metric-owner approval.
