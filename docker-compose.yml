@@ -9,21 +9,31 @@ services:
       KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
   spark:
     image: bitnami/spark:3.5
-    depends_on: [kafka]
-    volumes:
-      - ./:/app
-    working_dir: /app
-    command: >
-      bash -lc "spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1 spark/streaming_job.py"
-  producer:
-    image: python:3.12-slim
-    depends_on: [kafka]
-    volumes:
-      - ./:/app
+    depends_on:
+      kafka:
+        condition: service_healthy
+    volumes: ["./:/app"]
     working_dir: /app
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     command: >
-      bash -lc "pip install --no-cache-dir kafka-python==2.0.2 && sleep 12 && python src/producer.py"
+      bash -lc "spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.3 spark/streaming_job.py"
+  producer:
+    image: python:3.12-slim
+    depends_on:
+      kafka:
+        condition: service_healthy
+    volumes: ["./:/app"]
+    working_dir: /app
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    command: >
+      bash -lc "pip install --no-cache-dir kafka-python==2.2.15 && python src/producer.py"
