@@ -1,6 +1,6 @@
 # Real-Time Mobility Streaming Data Platform
 
-> Production-oriented **Data Engineering** portfolio project demonstrating event streaming, distributed processing, validation, enrichment, analytical storage, and orchestration using **Apache Kafka, PySpark Structured Streaming, PostgreSQL, Parquet, Airflow, and Docker**.
+> production-style **Data Engineering** reference project covering event streaming, distributed processing, validation, enrichment, analytical storage, and orchestration using **Apache Kafka, PySpark Structured Streaming, PostgreSQL, Parquet, Airflow, and Docker**.
 
 ## Executive Summary
 
@@ -222,7 +222,7 @@ The platform is designed to answer questions such as:
 
 ## Distributed Systems Considerations
 
-The project provides an interview-ready foundation for discussing:
+The project provides an documented foundation for discussing:
 
 - Kafka topic partitioning
 - Producer/consumer parallelism
@@ -263,8 +263,6 @@ A larger deployment could add:
 - Secrets management
 - Data lineage and cataloging
 
-## Data Engineer Interview Talking Points
-
 1. **Why Kafka?** Decouples producers and consumers and supports scalable event transport.
 2. **Why Spark Structured Streaming?** Provides distributed processing, event-time semantics, checkpoints, and scalable aggregations.
 3. **Why Parquet?** Efficient columnar storage for analytical workloads.
@@ -274,14 +272,14 @@ A larger deployment could add:
 
 **Designed an event-driven mobility data platform using Apache Kafka and PySpark Structured Streaming to ingest, validate, enrich, and aggregate public NYC transportation events, with Parquet/PostgreSQL storage and Airflow-oriented orchestration for scalable analytical workloads.**
 
-**Manish Kallu** — Data Engineering portfolio focused on streaming systems, distributed processing, SQL analytics, orchestration, and production-oriented data platforms.
+**Manish Kallu** — Data engineering work focused on streaming systems, distributed processing, SQL analytics, orchestration, and production-style data platforms.
 
 - GitHub: [manishkallu01-wq](https://github.com/manishkallu01-wq)
 - Email: manishkallu01@gmail.com
 
-## Data Engineering Portfolio Note
+## Scope
 
-This repository covers architecture and engineering patterns rather than claiming production ownership of Uber's systems. The data source is public NYC TLC trip data and the ride-hailing platform is an independent portfolio implementation.
+This repository covers architecture and engineering patterns rather than claiming production ownership of Uber's systems. The data source is public NYC TLC trip data and the ride-hailing platform is an independent local implementation.
 
 ## Repository implementation status
 
